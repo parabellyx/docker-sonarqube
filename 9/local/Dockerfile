@@ -7,8 +7,7 @@ ENV LANG='en_US.UTF-8' \
 #
 # SonarQube setup
 #
-ARG SONARQUBE_VERSION=9.3.0.51899
-ARG SONARQUBE_ZIP_URL=https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${SONARQUBE_VERSION}.zip
+ARG SONARQUBE_VERSION=9.3-SNAPSHOT
 ENV JAVA_HOME='/usr/lib/jvm/java-11-openjdk' \
     PATH="/opt/java/openjdk/bin:$PATH" \
     SONARQUBE_HOME=/opt/sonarqube \
@@ -17,6 +16,8 @@ ENV JAVA_HOME='/usr/lib/jvm/java-11-openjdk' \
     SQ_EXTENSIONS_DIR="/opt/sonarqube/extensions" \
     SQ_LOGS_DIR="/opt/sonarqube/logs" \
     SQ_TEMP_DIR="/opt/sonarqube/temp"
+
+COPY sonar-application-9.3-SNAPSHOT.zip /opt/sonarqube.zip
 
 RUN set -eux; \
     addgroup -S -g 1000 sonarqube; \
@@ -38,9 +39,6 @@ RUN set -eux; \
     done; \
     mkdir --parents /opt; \
     cd /opt; \
-    curl --fail --location --output sonarqube.zip --silent --show-error "${SONARQUBE_ZIP_URL}"; \
-    curl --fail --location --output sonarqube.zip.asc --silent --show-error "${SONARQUBE_ZIP_URL}.asc"; \
-    gpg --batch --verify sonarqube.zip.asc sonarqube.zip; \
     unzip -q sonarqube.zip; \
     mv "sonarqube-${SONARQUBE_VERSION}" sonarqube; \
     rm sonarqube.zip*; \
